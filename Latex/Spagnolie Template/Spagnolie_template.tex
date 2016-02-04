@@ -1,0 +1,137 @@
+\documentclass[pre,12pt]{revtex4-1}
+\usepackage{epsfig,graphics,amssymb,amsmath,subeqnarray,setspace,graphicx,amsthm,subfigure, mathrsfs,colortbl,color,bm,fancyhdr,tikz}
+
+% Header on each page, with team number and page numbering
+\pagestyle{fancy}
+\lhead{Team \# 52821} 
+\rhead{page \thepage \ of \pageref{LastPage}}
+\cfoot{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.0pt}
+
+% Make life easier: define some shortcuts!
+\def\b{\bm}
+\def\e{\epsilon}
+\def\ep{\varepsilon}
+\def\u{\underline}
+\def\c{\centerline}
+\def\n{\noindent}
+\def\h{\hangindent}
+
+
+\newcommand{\tcb}{\textcolor{blue}}
+
+% Double spacing is 2, 1.5 spacing is 1.5, ...
+\def\baselinestretch{1.0}
+
+% For tables:
+\definecolor{Gray}{gray}{0.9}
+\newcolumntype{C}{c<{\kern\tabcolsep}@{}}
+
+\begin{document}
+
+\title{(\textbf{Catchy, but informative title})}
+\author{Team \# 52821}
+\date{\today}
+
+\begin{abstract}
+
+\textbf{This is the most important section of the paper. Make it beautiful.} \\
+
+
+
+\end{abstract}
+\maketitle
+
+\newpage
+
+\section{Introduction}\label{Introduction}
+
+\section{Background}\label{Background}
+
+Either in the introduction or in the background section should be your first figure where you bring the problem to life. Nobody wants to read three pages about leaves. Just show a picture of a leaf, be sure to talk about anything you plot, and say Fig. shows a cross-section of pro vascular strands of tertiary and quaternary veins in a developing leaf, and you make the reader's day. 
+
+
+\section{Assumptions}\label{Assumptions}
+
+\begin{itemize}
+\item An assumption
+\end{itemize}
+
+\begin{enumerate}
+\item A numbered assumption
+\end{enumerate}
+
+The paper is organized as follows. The equations of motion are presented and written in terms of a helical coordinate system in \S\ref{Model}. The numerical method used to study the dynamics of an arbitrary (e.g. large amplitude) body shape is described in \S\ref{Numerics}, which provides a basis for comparison for the asymptotic results. In \S\ref{Results}, the predictions of the mathematical model are compared to the results of our numerical method, where we find that things are great. Sometimes. An improved model is described in \S\ref{Something}. We conclude with a discussion in \S\ref{Discussion}, where we discuss strengths and weaknesses of the model, and suggest future directions and stuff.
+
+
+\section{The mathematical model}\label{Model}
+
+Describe the model
+
+
+\section{Numerical method}\label{Numerics}
+
+Describe exactly what you're going to compute, and how.
+
+\section{Results and analysis}\label{Results}
+
+Results will come in the form of graphs and discussion, and sometimes tables. Table~\ref{Convergence} shows a nice template. Again, reference the label, not the number. 
+
+\newcolumntype{g}{>{\columncolor{Gray}}l}
+\begin{table}[h]
+\label{Convergence}
+\centering
+\begin{tabular}{@{}CCcCCcCCc@{}}
+\toprule
+\makebox[.3in]{$M$} & \makebox[.8in]{$U$} & \makebox[.8in]{$L$} &  \makebox[.5in]{$N_A/N_W$} & \makebox[.8in]{$U$} & \makebox[.8in]{$L$}& \makebox[.5in]{$N_W$} & \makebox[.8in]{$U$} & \makebox[.8in]{$L$} \\
+\colrule
+\rowcolor[gray]{0.9} 16 & 0.081733 & 19.60312 & 12 & 0.078402 & 19.59587 &  6 & 0.082795 & 19.59965 \\
+32 & 0.081090 & 19.57638 &  24 & 0.081149 & 19.61341 & 12&0.084734 & 19.58195\\
+\rowcolor[gray]{0.9} 64 & 0.081018 & 19.57598 &   48 & 0.080930 & 19.60641  & 24&0.085422 & 19.57128\\
+128 & 0.081019 & 19.57599 & 96 & 0.080938 & 19.60708 & 48&0.085432 & 19.56992\\
+\botrule
+\end{tabular}
+\caption{Three convergence studies: (1) varying $M$, with $N_{W}=5$ and $N_A/N_{W}=16$ fixed; (2) varying $N_A$, with $N_{W}=5$ and $M=16$ fixed; (3) varying $N_{W}$, with $N_A/N_{W}=16$ and $M=16$ fixed.}
+\end{table}
+
+
+
+\section{Something more}\label{Something}
+
+A new and improved model? Measuring the robustness of the model? Something? 
+
+\section{Discussion}\label{Discussion}
+
+Summarize the above. Put a bow around your wonderful story. You should have had a beginning and middle, and here is the end. 
+
+\subsection{Strengths of the model}
+
+Maybe some bullet points. 
+
+\subsection{Weaknesses of the model}
+
+\subsection{Future directions}
+
+And conclude with a final summary. 
+
+\appendix
+
+\section{Details for the derivation of $\mathcal{F}(x;\phi)$}\label{AppendixA}
+
+A slightly messy calculation that was still small enough to include, but long enough not to want to include up top.
+
+\section{TikZ samples}
+
+\begin{tikzpicture}[scale=5]
+	\draw[<->] (0,1) -- (0,0) -- (1,0);
+	\draw[blue, thick, domain = 0:1] plot (\x, {\x*\x});
+\end{tikzpicture}
+
+
+\begin{thebibliography}{10}
+\bibitem{nd97} Nelson, Timothy, and Dengler, Nancy. ``Leaf vascular pattern formation.'' The Plant Cell 9.7 (1997): 1121.
+\end{thebibliography}
+
+\end{document}
+

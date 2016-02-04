@@ -1,0 +1,312 @@
+\documentclass[pre,12pt]{revtex4-1}
+\usepackage{float}
+\usepackage{epsfig,graphics,amssymb,amsmath,subeqnarray,setspace,graphicx,amsthm,subfigure, mathrsfs,colortbl,color,bm,fancyhdr,wrapfig,tikz}
+
+% Header on each page, with team number and page numbering
+\pagestyle{fancy}
+\lhead{Team \# 52821} 
+\rhead{page \thepage \ of \pageref{LastPage}}
+\cfoot{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.0pt}
+
+% Make life easier: define some shortcuts!
+\def\b{\bm}
+\def\e{\epsilon}
+\def\ep{\varepsilon}
+\def\u{\underline}
+\def\c{\centerline}
+\def\n{\noindent}
+\def\h{\hangindent}
+
+
+\newcommand{\tcb}{\textcolor{blue}}
+
+% Double spacing is 2, 1.5 spacing is 1.5, ...
+\def\baselinestretch{1.0}
+
+% For tables:
+\definecolor{Gray}{gray}{0.9}
+\newcolumntype{C}{c<{\kern\tabcolsep}@{}}
+
+\begin{document}
+
+\title{\textbf{Too much Space Junk in Earth's Trunk: A Data-driven Analysis of Space Debris Reduction}}
+\author{Team \# 52821}
+\date{\today}
+
+\begin{abstract}
+
+\textbf{The summary goes here.} \\
+
+
+
+\end{abstract}
+\maketitle
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}\label{Introduction}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Background}\label{Background}
+
+In 1978, Donald Kessler of NASA hypothesized that there exists a critical mass for space debris, above which the frequency of collisions and creation of new debris would cascade and Earth's orbital space would become too densely filled with debris for space travel to be feasible.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Assumptions}\label{Assumptions}
+
+In the interest of combining simplicity and obtaining realistically relevant results, we made a number of assumptions. We believe that if we were to improve our model to relax these assumptions, our specific quantitative results would be affected, but not in a qualitative way. For example, differentiating the behavior of orbiting debris based on size would affect precise numbers of new debris created by collisions, but the trend of debris creation would remain quite similar. The following assumptions were utilized in our model to allow useful results within the time allowed.
+
+\begin{enumerate}
+  \item The probability of collision spacecrafts and satellites with medium and/or large-sized debris is at least $100$ and $1,000$ time greater in LEO than in MEO and GEO, respectively \cite{orbitalDebris}. Therefore, debris removal strategies should target LEO. Our space debris model will only take into activity in the LEO.
+  \item LEO goes from $200-1,600$km.
+  \item Operational satellites/spacecrafts stay at around the same altitude at which they are originally launched to.
+  \item The number of LEO launches per year is constant. This constant was obtained from the average number of LEO launches from the years $2000-2016$.
+  \item The fraction of the total number of launches per year that go to the ISS (370-460) to the Sun Synchronous Orbit (SS-O) (600-800) and to Other altitudes (200-1600) in  LEO is constant. This constant fractions from the total number of launches were calculated using the number of launches from the years $2010-2015$ to these altitudes.
+  \item The altitudes for yearly missions to the ISS are uniformly distributed between 370-460km. The same goes to missions to SS-O and Other.
+  \item The amount mission-related debris is constant across missions, and all of the debris released by the mission is dropped at the altitude where the mission ends. For example, a mission going to the ISS will drop all of the debris somewhere between 370-460 km.
+  \item The amount of debris obtained from figure  at a certain level is uniformly distributed throughout the level.\end{enumerate}
+
+
+Introduce the rest of the paper
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The mathematical model}\label{Model}
+
+\subsection{Overview}
+We model the debris in Low Earth Orbit (LEO), the spacecraft that are launched there, and the interactions of these species as a chemical reaction network based on continuous time Markov chains. The arrival of new spacecraft, the generation of new debris via collision as well as routine missions, and the removal of debris by reduction methods are stochastic processes with frequencies and behavior characterized by our research findings.
+
+\subsection{Initial Conditions}
+Before simulating debris reduction strategies in LEO we had to set the initial conditions that would tell us about the amount of debris LEO and number of operational satellites/spacecrafts. To obtain an accurate measure of the current amount of debris in LEO we used the debris density distribution shown in Figure \ref{fig:debris_density} \cite{NasaLEODensity}. Since the debris density distribution originally was only available as a plot in \cite{NasaLEODensity} we used a web app called WebPlotDigitizer \cite{webPlotDigitizer} to extract usable data from it and integrate it into our model. The green stars in Figure \ref{fig:debris_density} are the discrete data points which we used in our model. Since we focused on untracked debris but sufficient data only existed for tracked debris, we used the tracked debris distribution from \cite{NasaLEODensity} coupled with a scale factor to match current estimates of total numbers of untracked debris.
+
+On the other hand, in order to initialize the number of operational satellites/spacecrafts we downloaded the Union of Concerned Scientists (UCS) satallite database \cite{satelliteDB} and obtained the distribution of operational satellites in LEO shown in \ref{fig:initDistOpSat}. Refer to Appendix\ref{AppendixA} for more information about the satellite data.
+
+\begin{figure}[h]
+	\includegraphics[width=.8\linewidth]{"Figures/density_data"}
+	\caption{\footnotesize LEO Debris Density}
+	\label{fig:debris_density}
+\end{figure}
+
+\subsection{Initial Model - Orbital Decay}
+In order to understand the impacts of debris removal from space, we first needed to understand the behavior of objects already in space. Objects in LEO are subject to orbital decay due to atmospheric drag \cite{orbitalDebris}. This means that objects in LEO are slowly falling towards Earth making their orbital lifetime finite. While functional satellites are maintained at a desired altitude, other objects will eventually fall to Earth. Figure~\ref{fig:orbital_decay} shows curves of orbital lifetime for objects of various sizes introduced at various altitudes. The two dark solid lines represent the lifetimes of a 1cm object at the solar minimum and solar maximum. We use an average of these two lines for our objects orbital decay times. Our first model describes the orbital decay of the debris specified in the initial conditions.
+
+\begin{wrapfigure}{l}{0.4\textwidth}
+	\includegraphics[width=\linewidth]{"Figures/orbital_decay"}
+	\caption{Orbital decay}
+	\label{fig:orbital_decay}
+\end{wrapfigure}
+
+Combining this data, we created a model that simulates the orbital decay of space debris over time if no new debris were introduced, including from collisions. The altitude range of interest (200km - 1600km) is segmented into levels which are treated as a set of interacting bodies, with objects from upper levels decaying into lower ones. Figure~\ref{fig:init_model} shows the result of this model with space discretized into 4 levels. In our more complete simulations, we used 20 levels for greater fidelity of results. Without any sources of new debris, the debris in orbit in upper LEO slowly decays over time. The middle altitudes decay quickly, but reach an equilibrium sustained by the decay from upper altitude. The lower altitudes show similar effect, but the variations are quite pronounced since the decay rate is much faster. Discontinuities occur as the upper altitudes empty their debris. If the simulation were to be run for the length of the top orbital lifetime, the entire LEO region would empty. This of course ignores the effects of altitudes greater than $1,600$km. The orbital lifetimes for these altitudes increase exponentially therefore after one point debris at that level will orbit the Earth for thousand or even millions of years. For a quantitative measure of these lifetimes refer to Appendix \ref{AppendixB}.
+
+\begin{figure}[h!]
+	\includegraphics[width=.75\textwidth]{"Figures/Model1_4_10000"}
+	\caption{Initial Model - Orbital decay}
+	\label{fig:init_model}
+\end{figure}
+
+\subsection{Stochastics}
+We improved upon our basic model by adding various possible events. These events include launch of new spacecraft, small fragments colliding with small fragments to create more fragments, and catastrophic collisions of fragments with spacecraft. We treated these events as point processes that trigger specific results from each event.
+Our model may be represented with the following stochastic equation
+\begin{equation}
+	X(t) = X(0) + \sum_k Y_k \left(\int_0^t \lambda_k(X(s),s)ds\right) \zeta_k
+\end{equation}
+
+Where $X(t)$ is a vector of the quantity of space debris at time $t$, $Y_k$ are independent Poisson processes, $\lambda_k$ are intensity functions corresponding to each $\zeta_k$ reaction vector. The reaction vectors represent how a event in the model, e.g. a collision, affects the number of species. For example, a catastrophic collision vector would be
+\begin{equation}
+	\zeta = \begin{bmatrix} -1 \\ 2000 \end{bmatrix}
+\end{equation}
+since a catastrophic collision results in the lost of a spacecraft and the creation of approximately 2000 pieces of debris. For this vector, the corresponding $\lambda$ would signify the time frequency at which this particular catastrophic collisions take place. Each intensity function $\lambda_k$ can be a function of the variables and parameters of our choosing. Table~\ref{tab:lambdas} summarizes our choices for the dependence of each intensity function.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{r | c}
+	Event Intensity & Depends on \\ \hline
+	Spacecraft Launch & Constant \\ \hline
+	Catastrophic Collision & Number of Spacecraft and Debris \\ \hline
+	Non-Catastrophic Collision & Number of Debris \\ \hline
+\end{tabular}
+\caption{$\lambda$ dependence}
+\label{tab:lambdas}
+\end{table}
+
+\subsection{Debris Removal}
+
+The final iteration of our model included the variable of a process that removes debris from space over time. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Numerical methods}\label{Numerics}
+
+Two different numerical methods were merged in order to simulate our space debris model. Orbital decay is a deterministic process and was modeled in that fashion, while the occurence of the other events in our model was stochastic based. These two processes needed to work in harmony in order for our model to function.
+
+We desired to ensure that without any introduction of debris, our simulated space would clear in the time frame of the longest orbital lifetime. Thus, given an initial distribution of space debris across altitudes, found \textbf{reference}, we created a simluated history of those objects spread over the length of the orbital lifetime, in a uniform random distribution. For example, at an altitude with an orbital lifetime of 10 days with 1000 initial pieces of debris will lose an average of 100 pieces of debris to decay per day such that this altitude will be empty on day 10. However, any new objects added to that altitude will be accounted for and begin to decay at the same rate.
+
+The stochastic aspects of our simulations utlized a next reaction algorithm, a standard and efficient method of simulating Continuous Time Markov Chains. For each time step, the intensity functions are calcuated and used to scale an exponential random variable. This scaling is tracked for each iteration so that the intensities accumlate for each reaction. The reaction with the highest cumulative intensity is chosen as the next reaction, and the length of the time step is chosen to be the exponential random variable scaled by that chosen intensity function. That cumulative intensity is reset to zero
+
+\begin{equation*}
+\begin{gathered}
+	P \text{ and } T \text{ are initialized, $P$ as a vector of exponential random variables and $T$ as a vector of zeros}\\
+	\lambda \text{ is calculated based on Table \ref{tab:lambdas}}\\
+\end{gathered}
+\end{equation*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results and analysis}\label{Results}
+
+To see the effects of our chosen debris removal strategy over time, we compared two key statistics from running simulations for a 100 year span. Without any debris reduction, current estimates are that there will be 12.4 catastrophic collisions during that time~\cite{CollisionProbs}. Our model was run and calibrated to match that result. We then iterated over a range of debris removal amounts and recorded the number of catastrophic collisions as well as the net change in debris amounts in LEO. Figures~\ref{fig:reducecol} and~\ref{fig:diffdebris} show the results of these simulations. 5 repetitions of each removal amount was averaged. In addition, a set of simulations was run with the debris removal set to its maximum amount but only for the first 5 years. Table~\ref{tab:results} summarizes the results of all simulations.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{| r | c| c| c|} \hline
+	Avg Daily Removal Amount & Avg Debris Change & Avg Catastrophic Collisions & Standard Deviation \\ \hline
+	0 & 60247 & 11.2 & 4.89 \\ \hline
+	8 & 7495 & 8 & 5.24 \\ \hline
+	16 & -19925 & 8.4 & 4.16 \\ \hline
+	32 & -107733 & 2.6 & 2.07 \\ \hline
+	64 & -104532 & 0.8 & 1.10 \\ \hline
+	128 & -107632 & 0.8 & 0.84 \\ \hline
+	256 & -105705 & 1.0 & 1.22 \\ \hline
+	712 & -100216 & 1.0 & 1.00 \\ \hline
+	712/5yr & -61117 & 2.8 & 4.6 \\ \hline
+\end{tabular}
+\caption{Simulation Results}
+\label{tab:results}
+\end{table}
+
+\begin{figure}[h!]
+	\includegraphics[width=.75\textwidth]{"Figures/results_collisions"}
+	\caption{The predicted number of catastrophic collisions drops quickly with debris removal}
+	\label{fig:reducecol}
+\end{figure}
+\begin{figure}[h!]
+	\includegraphics[width=.75\textwidth]{"Figures/results_difference"}
+	\caption{With only a small amount of daily debris removal, significant changes can be made to the amounts in LEO}
+	\label{fig:diffdebris}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Something more}\label{Something}
+
+A new and improved model? Measuring the robustness of the model? Something? 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion}\label{Discussion}
+
+Our results indicate that a low threshold of debris removal on a daily basis can have substantial effects on future catastrophic collisions and the environment of debris as a whole. While some sources claim to be able to affordably remove LEO space debris by 260,000 objects per year, we found that removing as little as 12,000 per year can reduce future catastrophic collisions by 8.6. These are collisions involving space craft that are expensive to build, launch, and maintain. Not needing to replace these destroyed space craft provides savings of hundreds of millions of dollars. This provides a massive incentive for a private company to take on the challenge of space debris removal.
+
+\subsection{Strengths of the model}
+
+\begin{itemize}
+	\item Our model
+\end{itemize}
+
+\subsection{Weaknesses of the model}
+
+\subsection{Future directions}
+
+And conclude with a final summary. 
+
+\clearpage
+
+\bibliographystyle{unsrt}
+\bibliography{ThePaper}
+
+\clearpage
+\appendix
+
+\section{Operational Satellite Data}\label{AppendixA}
+
+Our model initialized the number of operational satellited in LEO using data obtained from the Union of Concerned Scientists (UCS) Satellite Database \cite{satelliteDB}. According to \cite{satelliteDB} there are 696 functional satellites in orbit as of 8/31/15, whose altitudes are distributed as depicted in Figure \ref{fig:initDistOpSat}. Our level-based debris model initializes places these satellites in different levels depending on the altitude.
+
+\begin{figure}[h!]
+	\includegraphics[width=.8\textwidth]{"Figures/initDistributionOfOperationalSatellites"}
+	\caption{Initial distribution of operational satellites in LEO as specified by the UCS Satellite Database.}
+	\label{fig:initDistOpSat}
+\end{figure}
+
+\clearpage
+\section{Launch Data}\label{AppendixB}
+
+The amount of mission-related debris that is produced every year is proportional to the number of yearly launches. In order to calculate a reasonable measure for mission-related debris we had to first gather yearly LEO launch data. Furthermore, we had to estimate where in the LEO this debris would end up to determine in which level of our model it would end up. To this end we classified LEO launches as either: ISS (International Space Station), SS-O (Sun-Synchronous Orbit) or Other. Other launches are the ones that were not cataloged as either ISS or SS-O. The following tables contain the data gathered from \cite{spaceLaunchReport}, that was used to calculate an average number of launches and the percentage of the launches that go to either the ISS, SS-O or some other LEO altitude.
+\
+\begin{table}[htb]
+    \begin{tabular}{| c | c | c |} \hline
+    \textbf{Year} & \textbf{LEO Launches} & \textbf{Total Launches} \\ \hline
+    2000 & 33 & 85 \\ \hline
+    2001 & 27 & 59 \\ \hline
+    2002 & 31 & 65 \\ \hline
+    2003 & 25 & 63 \\ \hline
+    2004 & 26 & 54 \\ \hline
+    2005 & 29 & 55 \\ \hline
+    2006 & 33 & 66 \\ \hline
+    2007 & 36 & 68 \\ \hline
+    2008 & 36 & 68 \\ \hline 
+    2009 & 45 & 78 \\ \hline
+    2010 & 37 & 74 \\ \hline
+    2011 & 43 & 84 \\ \hline
+    2012 & 40 & 78 \\ \hline
+    2013 & 48 & 81 \\ \hline
+    2014 & 50 & 92 \\ \hline
+    2015 & 44 & 86 \\ \hline
+    \end{tabular}
+\caption{Launch data obtained from the Space Launch Report log files \cite{spaceLaunchReport}.}
+\end{table}
+
+\begin{table}[htb]
+\centering
+    \begin{tabular}{| c | c | c | c |} \hline
+    \textbf{Year} & \textbf{LEO ISS Launch} & \textbf{LEO SS-O Launch}  & \textbf{LEO Other Launch} \\ \hline
+    2010 & 12 & 12 & 14\\ \hline
+    2011 & 13 & 17 & 13\\ \hline
+    2012 & 12 & 14 & 14\\ \hline
+    2013 & 12 & 16 & 20\\ \hline
+    2014 & 13 & 23 & 14\\ \hline
+    2015 & 12 & 18 & 11\\ \hline
+    \end{tabular}
+\caption{LEO Launch data obtained from the Space Launch Report log files. ISS: International Space Station; SS-O: Sun Synchronous Orbit; Other: Not specified \cite{spaceLaunchReport}.}
+\end{table}
+
+\clearpage
+\section{Altitude vs. Decay Times Extrapolation}\label{AppendixB}
+The data in Figure \ref{fig:orbital_decay} only shows us the decay times up to $~1,000$km. The length of our final simulations were around a $100-200$ years ($365,000-730,000$ days). This means that all of the initial debris in the higher levels will have completely decayed. Therefore we decided to extrapolate the data so it would contain altitudes up to $2,000$km as shown in \ref{fig:altDecayTimesExtrapolated} so that not even in the longest simulations we have the debris from the higher levels reach the first level.
+
+\begin{figure}[h]
+\centerline{%
+\includegraphics[height=6cm, width=0.5\textwidth]{"Figures/extrapolatedAltDecayTimes"}%
+\includegraphics[height=6cm, width=0.5\textwidth]{"Figures/altDecayTimesWithAddedData"}%
+}%
+\caption{Left: Altitude vs Decay Times data with trendline. Right: Altitude vs Decay Times sample from both original data and extrapolated data of Left. Samples from from 175-1,000 km come from the original data and the sample from 1,000-2,000 km come from the trendline.}
+\label{fig:altDecayTimesExtrapolated}
+\end{figure}
+
+
+\clearpage
+\section{Collision Debris}\label{AppendixC}
+The amount of debris created from existing debris colliding with debris fragments or new launches is directly correlated to the debris density. A Lockheed Martin Space Operations team used NASA's elite LEGEND model to analyzed the probabilities of collisions from existing debris. The analysis was completing forecasting 100 years in the future. The results pertaining to shuttle-fragment and fragment-fragment collisions is summarized in Table \ref{table:CollisionAlt}. A resulting distribution over altitude (shown in Figure: \ref{fig:CollisionAlt}) corresponds to the existing LEO debris density distribution (shown in Figure: \ref{fig:debris_density}) \citep{CollisionProbs}. Although this data was used to model collisions for larger debris than the 1cm to 10cm range, the catastrophic parameter of a similar model \cite{CollisionProbs2} is insignificant combined with the increase in spatial density for smaller debris.
+
+
+\begin{table}[htb]
+\centering
+    \begin{tabular}{| c | c |} \hline
+    \textbf{Collision Type} & \textbf{Number of Catastrophic Collisions} \\ \hline
+    Shuttle-fragment & 12.4\\ \hline
+    fragment-fragment & 0.9\\ \hline
+    \end{tabular}
+\caption{Collisions by Objects colliding in LEO orbit over 100 years}
+\label{table:CollisionAlt}
+\end{table}
+
+
+\begin{figure}[h!]
+	\includegraphics[width=.5\textwidth]{"Figures/CollisionAlt"}
+	\caption{Impact Speed vs Collision Altitude for LEO collisions collected from LEGEND model for 30 Monte-Carlo runs predicting next 100 years\citep{CollisionProbs}.}
+	\label{fig:CollisionAlt}
+\end{figure}
+
+\end{document}
+

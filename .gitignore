@@ -1,0 +1,13 @@
+.picasa.ini
+Latex/12-10 Practice Session/PracSesh1_jmj.aux
+Latex/12-10 Practice Session/PracSesh1_jmj.bbl
+Latex/12-10 Practice Session/PracSesh1_jmj.blg
+Latex/12-10 Practice Session/PracSesh1_jmj.log
+Latex/12-10 Practice Session
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.log
+*.out
+*.gz
